@@ -3,13 +3,18 @@ package com.maryang.fastrxjava.ui.repos
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.maryang.fastrxjava.base.BaseApplication
 import com.maryang.fastrxjava.entity.GithubRepo
 import com.maryang.fastrxjava.util.BackpressureSample
+import com.maryang.fastrxjava.util.EventBus
+import com.maryang.fastrxjava.util.HotObservable
 import io.reactivex.observers.DisposableObserver
 import kotlinx.android.synthetic.main.activity_github_repos.*
+import org.jetbrains.anko.alert
 
 
 class GithubReposActivity : AppCompatActivity() {
@@ -25,6 +30,8 @@ class GithubReposActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(com.maryang.fastrxjava.R.layout.activity_github_repos)
 
+        HotObservable.logReplaySubject()
+
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = this.adapter
 
@@ -36,6 +43,7 @@ class GithubReposActivity : AppCompatActivity() {
 
             override fun afterTextChanged(text: Editable?) {
                 viewModel.searchGithubRepos(text.toString())
+                EventBus.post(1)
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -45,6 +53,11 @@ class GithubReposActivity : AppCompatActivity() {
             }
         })
         subscribeSearch()
+
+        EventBus.subscribe {
+            Log.d(BaseApplication.TAG, "event bus $it")
+        }
+        
     }
 
     private fun subscribeSearch() {

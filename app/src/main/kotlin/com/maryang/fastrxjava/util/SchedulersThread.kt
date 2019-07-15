@@ -4,9 +4,37 @@ import android.util.Log
 import com.maryang.fastrxjava.base.BaseApplication
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.BehaviorSubject
 import java.util.concurrent.Executors
 
 object SchedulersThread {
+
+    fun problem1() {
+        Log.d(BaseApplication.TAG, "start thread: ${Thread.currentThread().name}")
+
+        val subject = BehaviorSubject.createDefault(Unit)
+
+        subject
+            // subscribe 했을 때 실행되는 쓰레드에서 구독이 발생
+            .subscribeOn(Schedulers.computation())
+            // subscribe, onNext 가 발생했을 때 실행되는 쓰레드를 명시적으로 할 수 있음
+            .observeOn(Schedulers.computation())
+            .subscribe {
+                Log.d(BaseApplication.TAG, "subscribe thread: ${Thread.currentThread().name}")
+            }
+
+        Thread.sleep(100L)
+
+        // 현재 쓰레드에서 구독이 발생
+        subject.onNext(Unit)
+
+        Thread.sleep(100L)
+
+
+        // main thread
+        // computation
+        // main thread
+    }
 
     fun logSchedulersThread() {
         Log.d(BaseApplication.TAG, "current thread: ${Thread.currentThread().name}")
