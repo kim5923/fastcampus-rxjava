@@ -1,8 +1,11 @@
 package com.maryang.fastrxjava.ui.repo
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.bumptech.glide.Glide
+import com.bumptech.glide.Glide.init
 import com.maryang.fastrxjava.R
 import com.maryang.fastrxjava.base.BaseActivity
 import com.maryang.fastrxjava.entity.GithubRepo
@@ -22,9 +25,9 @@ class GithubRepoActivity : BaseActivity() {
 
         fun start(context: Context, repo: GithubRepo) {
             context.startActivity(
-                context.intentFor<GithubRepoActivity>(
-                    KEY_REPO to repo
-                )
+                    context.intentFor<GithubRepoActivity>(
+                            KEY_REPO to repo
+                    ).setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             )
         }
     }
@@ -37,6 +40,10 @@ class GithubRepoActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_github_repo)
+        init(intent)
+    }
+
+    private fun init(intent:Intent) {
         intent.getParcelableExtra<GithubRepo>(KEY_REPO).let {
             this.repo = it
             supportActionBar?.run {
@@ -45,6 +52,13 @@ class GithubRepoActivity : BaseActivity() {
             }
             showRepo(it)
             setOnClickListener()
+        }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let {
+            init(it)
         }
     }
 

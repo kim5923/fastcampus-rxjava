@@ -1,6 +1,7 @@
 package com.maryang.fastrxjava.data.source
 
 import com.google.gson.JsonElement
+import com.maryang.fastrxjava.entity.GithubRepo
 import io.reactivex.Completable
 import io.reactivex.Single
 import retrofit2.http.*
@@ -11,6 +12,11 @@ interface GithubApi {
     fun searchRepos(
         @Query("q") search: String
     ): Single<JsonElement>
+
+    @GET("users/{userName}/repos")
+    fun userRepos(
+        @Path("userName") userName: String
+    ): Single<List<GithubRepo>>
 
     @GET("user/starred/{owner}/{repo}")
     fun checkStar(

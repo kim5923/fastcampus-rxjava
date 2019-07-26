@@ -21,6 +21,11 @@ class GithubRepository {
             }
             .subscribeOn(Schedulers.io())
 
+    fun userRepos(userName: String): Single<List<GithubRepo>> =
+            api.userRepos(userName)
+                    .subscribeOn(Schedulers.io())
+
+
     fun checkStar(owner: String, repo: String): Completable =
         api.checkStar(owner, repo)
             .subscribeOn(Schedulers.io())
